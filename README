@@ -1,0 +1,83 @@
+AutoComplete
+============
+
+Rails plugin for better auto_complete, especially it gets along with ActiveScaffold nested forms
+
+Methods
+=======
+
+[helper]
+* auto_complete_for(record_name, column_name, field_name, target_options = {}, suggest_options = {}, trigger_options = {})
+    create text_field and candidate_area and callback elements like text_field_with_auto_complete
+
+* auto_complete_javascript
+    return javascript string tag for this plugin
+
+* auto_complete_stylesheet
+    return stylesheet string for this plugin
+
+* auto_complete_includes
+    return javscript and styleshet string for this plugin
+
+[controller]
+* auto_complete(records, options = {}, &block)
+    create ul and li elements for the AJAX autocomplete requests
+    records : candidate objects
+    options :
+      - :blank : a message string when there are no candidates
+                 (set false if you don't want the message)
+    block   : a block to create candidate message from a record.
+              :to_label, :name, :id methods are used in order for default
+
+Example
+=======
+
+[view]
+<%- @user = User.new ->
+<%= auto_complete_includes %>
+<%= auto_complete_for :user, :pref_id  %>
+
+[controller]
+class UserController < ApplicationController
+  include AutoComplete
+
+  def auto_complete_pref_id
+    # form value is set to @input automatically
+    records = Pref.find(:all, :conditions=>["name LIKE ?", "%#{@input}%"], :limit=>10)
+    auto_complete(records, &:name)
+  end
+end
+
+With ActiveScaffold
+===================
+[helper]
+  def pref_id_form_column(record, field_name)
+    opts = {:controller=>:auto_complete, :action=>:pref_id, :name=>field_name}
+    auto_complete_for :record, :pref_id, opts, {:style=>"width:600px;"}
+  end
+
+[controller]
+class AutoCompleteController < ApplicationController
+  include AutoComplete
+
+  def pref_id
+    conds   = ["id::varchar ~* ?", Regexp.escape(@input)]
+    records = Pref.find(:all, :conditions=>conds, :order=>:id, :limit=>10)
+    auto_complete(records) do |pref|
+      value = auto_complete_connect(params[:id], pref.id)
+      label = pref.name
+      "%s %s" % [value, label]
+    end
+  end
+
+
+Advanced Settings
+=================
+
+[controller]
+* auto_complete_response_not_implemented
+    This string returns via Ajax autocompletion request when ActionController::UnknownAction is raised.
+    If you want normal exception, override this method to return nil.
+
+
+Copyright (c) 2008 maiha@wota.jp, released under the MIT license
