@@ -39,7 +39,7 @@ Example
 
 [controller]
 class UserController < ApplicationController
-  include AutoComplete
+  include SexyAutoComplete
 
   def auto_complete_pref_id
     # form value is set to @input automatically
@@ -58,7 +58,7 @@ With ActiveScaffold
 
 [controller]
 class AutoCompleteController < ApplicationController
-  include AutoComplete
+  include SexyAutoComplete
 
   def pref_id
     conds   = ["id::varchar ~* ?", Regexp.escape(@input)]
@@ -79,5 +79,9 @@ Advanced Settings
     This string returns via Ajax autocompletion request when ActionController::UnknownAction is raised.
     If you want normal exception, override this method to return nil.
 
+
+Note
+====
+* auto_complete plugin is also needed in Rails2
 
 Copyright (c) 2008 maiha@wota.jp, released under the MIT license

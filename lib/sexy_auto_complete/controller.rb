@@ -1,4 +1,4 @@
-module AutoComplete
+module SexyAutoComplete
   module Controller
   private
     def auto_complete_read_input

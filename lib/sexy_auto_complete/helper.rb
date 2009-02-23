@@ -1,4 +1,4 @@
-module AutoComplete
+module SexyAutoComplete
   module Helper
     def auto_complete_for(record_name, column_name, target_options = {}, suggest_options = {}, trigger_options = {})
       record     = instance_variable_get("@#{record_name}")
